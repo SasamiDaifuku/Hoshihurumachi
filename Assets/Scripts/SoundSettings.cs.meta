@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 2961f02f2349c4dd89e263226a01c344
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - stageManager: {instanceID: 0}
+  - soundButton: {instanceID: 0}
+  - closeButton: {instanceID: 0}
+  - bgmSlider: {instanceID: 0}
+  - seSlider: {instanceID: 0}
+  - seSettingAudio: {fileID: 8300000, guid: 62a01a7130a7b49b0af4e044bbdee4c6, type: 3}
+  - canvasGroupSound: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
