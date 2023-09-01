@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using DG.Tweening;
 using TMPro;
+using UnityEngine;
 
 public class BlinkCanvasGroup : MonoBehaviour
 {
@@ -17,11 +15,12 @@ public class BlinkCanvasGroup : MonoBehaviour
     {
         this.txtStart = this.GetComponent<TextMeshProUGUI>();
         this.txtStart.DOFade(0.0f, this.DurationSeconds).SetEase(this.EaseType).SetLoops(-1, LoopType.Yoyo);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

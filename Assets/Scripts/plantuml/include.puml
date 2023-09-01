@@ -1,0 +1,19 @@
+@startuml
+!include .\\._FadeManager.puml
+!include .\\._GameController.puml
+!include .\\._SoundManager.puml
+!include .\\BGMPlayer.puml
+!include .\\BlinkCanvasGroup.puml
+!include .\\CpuCat.puml
+!include .\\Explosion.puml
+!include .\\FadeManager.puml
+!include .\\GameController.puml
+!include .\\PlayerController.puml
+!include .\\SoundManager.puml
+!include .\\SoundSettings.puml
+!include .\\StageManager.puml
+!include .\\StarCharacter.puml
+!include .\\StarGenerator.puml
+!include .\\TimeManager.puml
+!include .\\TitelObject.puml
+@enduml

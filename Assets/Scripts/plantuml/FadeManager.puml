@@ -1,0 +1,7 @@
+@startuml
+class FadeManager {
+    + NextSceneTransition(sceneNum:int) : void
+    + CurrentSceneTransition() : void
+}
+MonoBehaviour <|-- FadeManager
+@enduml

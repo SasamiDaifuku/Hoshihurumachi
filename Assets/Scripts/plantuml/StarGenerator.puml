@@ -1,0 +1,13 @@
+@startuml
+class StarGenerator {
+}
+enum GameLevel {
+    LEVEL1,
+    LEVEL2,
+    LEVEL3,
+    LEVEL4,
+    LEVEL5,
+}
+MonoBehaviour <|-- StarGenerator
+StarGenerator +-- GameLevel
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+class BlinkCanvasGroup {
+    + DurationSeconds : float
+}
+MonoBehaviour <|-- BlinkCanvasGroup
+BlinkCanvasGroup --> "EaseType" Ease
+@enduml

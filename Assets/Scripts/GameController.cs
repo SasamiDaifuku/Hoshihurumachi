@@ -19,8 +19,10 @@ public class GameController : MonoBehaviour
         Play,
         End,
     }
+
     // 現在のステート
     private PlayState currentState = PlayState.None;
+
     public PlayState GetSetPlayState
     {
         get { return currentState; }
@@ -29,8 +31,10 @@ public class GameController : MonoBehaviour
 
     //! カウントダウンスタートタイム
     [SerializeField] private int countStartTime = 3;
+
     //! カウントダウンテキスト
     [SerializeField] private TextMeshProUGUI countdownText = null;
+
     // カウントダウンの現在値
     float currentCountDown = 0;
 
@@ -38,6 +42,7 @@ public class GameController : MonoBehaviour
     /// ゲーム終了時に表示するテキスト
     /// </summary>
     [SerializeField] private TextMeshProUGUI resultText;
+
     /// <summary>
     /// ゲーム終了時に表示するスコアテキスト
     /// </summary>
@@ -52,6 +57,7 @@ public class GameController : MonoBehaviour
     /// フェードに使用
     /// </summary>
     [SerializeField] private FadeManager fadeManager;
+
     /// <summary>
     /// タイトルのシーン番号
     /// </summary>
@@ -81,7 +87,7 @@ public class GameController : MonoBehaviour
         retryButton.onClick.AsObservable()
             .Subscribe(_ => fadeManager.NextSceneTransition(seneGameNum))
             .AddTo(this);
-        
+
         GameObject objectSoundManager = CheckOtherSoundManager();
         soundManager = objectSoundManager.GetComponent<SoundManager>();
         //カウントダウンタイマーをスタート
@@ -101,7 +107,8 @@ public class GameController : MonoBehaviour
             {
                 intNum = (int)Mathf.Ceil(currentCountDown);
                 countdownText.text = intNum.ToString();
-            }else if(currentCountDown <= 0)
+            }
+            else if (currentCountDown <= 0)
             {
                 //開始
                 GetSetPlayState = PlayState.Play;
@@ -111,7 +118,6 @@ public class GameController : MonoBehaviour
                 // Start表示を少しして消す.
                 StartCoroutine(WaitErase());
             }
-            
         }
         /*
         //デバッグ用
@@ -120,8 +126,8 @@ public class GameController : MonoBehaviour
             DisplayGameOver();
         }
         */
-
     }
+
     /// <summary>
     /// 少し経過してからStart表示をけす
     /// </summary>
@@ -149,7 +155,8 @@ public class GameController : MonoBehaviour
         scoreText.text = string.Format("結果{0}秒", scoreTime.ToString("0.00"));
         //クリックイベントを購読
         tweetButton.onClick.AsObservable()
-            .Subscribe(_ => naichilab.UnityRoomTweet.Tweet("hoshifuru_machino_nekochan", string.Format("ねこちゃんとのお散歩を{0}秒楽しみました！！", scoreTime.ToString("0.00")), "星降る町のねこちゃん", "unity1week"))
+            .Subscribe(_ => naichilab.UnityRoomTweet.Tweet("hoshifuru_machino_nekochan",
+                string.Format("ねこちゃんとのお散歩を{0}秒楽しみました！！", scoreTime.ToString("0.00")), "星降る町のねこちゃん", "unity1week"))
             .AddTo(this);
         DisplayCanvas();
         // ボードNo1にスコアを送信する。
@@ -180,5 +187,4 @@ public class GameController : MonoBehaviour
     {
         return GameObject.FindGameObjectWithTag("SoundManager");
     }
-
 }

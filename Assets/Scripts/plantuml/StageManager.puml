@@ -1,0 +1,12 @@
+@startuml
+class StageManager {
+    + seneNum : int
+}
+enum PlayState {
+    Ready,
+    Setting,
+}
+MonoBehaviour <|-- StageManager
+StageManager --> "GetSetPlayState" PlayState
+StageManager +-- PlayState
+@enduml

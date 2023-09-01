@@ -1,0 +1,16 @@
+@startuml
+class GameController {
+    + seneTitleNum : int
+    + seneGameNum : int
+    + DisplayGameOver() : void
+}
+enum PlayState {
+    None,
+    Ready,
+    Play,
+    End,
+}
+MonoBehaviour <|-- GameController
+GameController --> "GetSetPlayState" PlayState
+GameController +-- PlayState
+@enduml

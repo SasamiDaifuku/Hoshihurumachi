@@ -1,0 +1,7 @@
+@startuml
+class StarCharacter {
+    + SetUpStarCharacter(canvasTran:Transform) : void
+    + DeleteInstance() : void
+}
+MonoBehaviour <|-- StarCharacter
+@enduml

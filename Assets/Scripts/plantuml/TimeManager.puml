@@ -1,0 +1,6 @@
+@startuml
+class TimeManager {
+    + GetSetTime : float <<get>>
+}
+MonoBehaviour <|-- TimeManager
+@enduml

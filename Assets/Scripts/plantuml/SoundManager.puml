@@ -1,0 +1,9 @@
+@startuml
+class SoundManager {
+    + GetSetBgmVolume : float <<get>> <<set>>
+    + GetSetSeVolume : float <<get>> <<set>>
+    + PlayBgm(clip:AudioClip) : void
+    + PlaySe(clip:AudioClip) : void
+}
+MonoBehaviour <|-- SoundManager
+@enduml
