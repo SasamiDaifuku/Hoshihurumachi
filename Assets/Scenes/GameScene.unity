@@ -3716,8 +3716,8 @@ MonoBehaviour:
   scoreText: {fileID: 1464793634}
   canvasGroupGameEnd: {fileID: 405020313}
   fadeManager: {fileID: 635642351}
-  seneTitleNum: 0
-  seneGameNum: 1
+  sceneTitleNum: 0
+  sceneGameNum: 1
   retryButton: {fileID: 1851958557}
   endButton: {fileID: 433440786}
   tweetButton: {fileID: 1797541584}

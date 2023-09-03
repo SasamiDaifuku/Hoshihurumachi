@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
 using UniRx;
+using UnityEngine.Serialization;
 using unityroom.Api;
 
 public class GameController : MonoBehaviour
@@ -21,13 +21,8 @@ public class GameController : MonoBehaviour
     }
 
     // 現在のステート
-    private PlayState currentState = PlayState.None;
 
-    public PlayState GetSetPlayState
-    {
-        get { return currentState; }
-        private set { currentState = value; }
-    }
+    public PlayState GetSetPlayState { get; private set; } = PlayState.None;
 
     //! カウントダウンスタートタイム
     [SerializeField] private int countStartTime = 3;
@@ -36,7 +31,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI countdownText = null;
 
     // カウントダウンの現在値
-    float currentCountDown = 0;
+    private float _currentCountDown = 0;
 
     /// <summary>
     /// ゲーム終了時に表示するテキスト
@@ -61,19 +56,19 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// タイトルのシーン番号
     /// </summary>
-    public int seneTitleNum;
+    [FormerlySerializedAs("sceneTitleNum")] public int sceneTitleNum;
 
     /// <summary>
     /// ゲーム画面のシーン番号
     /// </summary>
-    public int seneGameNum;
+    [FormerlySerializedAs("sceneGameNum")] public int sceneGameNum;
 
     [SerializeField] private Button retryButton;
     [SerializeField] private Button endButton;
     [SerializeField] private Button tweetButton;
     [SerializeField] private TimeManager timeManager;
 
-    private SoundManager soundManager;
+    private SoundManager _soundManager;
     [SerializeField] private AudioClip gameStartClip;
 
     private void Start()
@@ -82,14 +77,14 @@ public class GameController : MonoBehaviour
         endButton.enabled = false;
         //クリックイベントを購読
         endButton.onClick.AsObservable()
-            .Subscribe(_ => fadeManager.NextSceneTransition(seneTitleNum))
+            .Subscribe(_ => fadeManager.NextSceneTransition(sceneTitleNum))
             .AddTo(this);
         retryButton.onClick.AsObservable()
-            .Subscribe(_ => fadeManager.NextSceneTransition(seneGameNum))
+            .Subscribe(_ => fadeManager.NextSceneTransition(sceneGameNum))
             .AddTo(this);
 
         GameObject objectSoundManager = CheckOtherSoundManager();
-        soundManager = objectSoundManager.GetComponent<SoundManager>();
+        _soundManager = objectSoundManager.GetComponent<SoundManager>();
         //カウントダウンタイマーをスタート
         CountDownStart();
     }
@@ -97,50 +92,38 @@ public class GameController : MonoBehaviour
     private void Update()
     {
         //ステートがReadyの時カウントダウン
-        if (currentState == PlayState.Ready)
+        if (GetSetPlayState != PlayState.Ready) return;
+        //時間を引いていく
+        _currentCountDown -= Time.deltaTime;
+        //カウントダウン中
+        if (_currentCountDown <= (float)countStartTime && _currentCountDown > 0)
         {
-            //時間を引いていく
-            currentCountDown -= Time.deltaTime;
-            int intNum = 0;
-            //カウントダウン中
-            if (currentCountDown <= (float)countStartTime && currentCountDown > 0)
-            {
-                intNum = (int)Mathf.Ceil(currentCountDown);
-                countdownText.text = intNum.ToString();
-            }
-            else if (currentCountDown <= 0)
-            {
-                //開始
-                GetSetPlayState = PlayState.Play;
-                intNum = 0;
-                soundManager.PlaySe(gameStartClip);
-                countdownText.text = "お散歩開始！！";
-                // Start表示を少しして消す.
-                StartCoroutine(WaitErase());
-            }
+            var intNum = (int)Mathf.Ceil(_currentCountDown);
+            countdownText.text = intNum.ToString();
         }
-        /*
-        //デバッグ用
-        if (Input.GetMouseButtonDown(0))
+        else if (_currentCountDown <= 0)
         {
-            DisplayGameOver();
+            //開始
+            GetSetPlayState = PlayState.Play;
+            _soundManager.PlaySe(gameStartClip);
+            countdownText.text = "お散歩開始！！";
+            // Start表示を少しして消す.
+            StartCoroutine(WaitErase());
         }
-        */
     }
 
     /// <summary>
     /// 少し経過してからStart表示をけす
     /// </summary>
     /// <returns></returns>
-    IEnumerator WaitErase()
+    private IEnumerator WaitErase()
     {
         yield return new WaitForSeconds(0.5f);
-        Sequence seq = DOTween.Sequence();
+        var seq = DOTween.Sequence();
         seq.Append(countdownText.DOFade(0, 0.5f));
         seq.Join(countdownText.DOScale(5, 0.5f))
             .AppendCallback(() => countdownText.gameObject.SetActive(false));
-
-        //countdownText.gameObject.SetActive(false);
+        
     }
 
     /// <summary>
@@ -151,12 +134,12 @@ public class GameController : MonoBehaviour
         GetSetPlayState = PlayState.End;
         resultText.text = "ねこちゃんがフキゲンに\nなっちゃった！";
         // スコア取得処理
-        float scoreTime = timeManager.GetSetTime;
-        scoreText.text = string.Format("結果{0}秒", scoreTime.ToString("0.00"));
+        var scoreTime = timeManager.GetSetTime;
+        scoreText.text = $"結果{scoreTime:0.00}秒";
         //クリックイベントを購読
         tweetButton.onClick.AsObservable()
             .Subscribe(_ => naichilab.UnityRoomTweet.Tweet("hoshifuru_machino_nekochan",
-                string.Format("ねこちゃんとのお散歩を{0}秒楽しみました！！", scoreTime.ToString("0.00")), "星降る町のねこちゃん", "unity1week"))
+                $"ねこちゃんとのお散歩を{scoreTime:0.00}秒楽しみました！！", "星降る町のねこちゃん", "unity1week"))
             .AddTo(this);
         DisplayCanvas();
         // ボードNo1にスコアを送信する。
@@ -176,14 +159,14 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// カウントダウンスタート
     /// </summary>
-    void CountDownStart()
+    private void CountDownStart()
     {
-        currentCountDown = (float)countStartTime;
+        _currentCountDown = (float)countStartTime;
         GetSetPlayState = PlayState.Ready;
         countdownText.gameObject.SetActive(true);
     }
 
-    private GameObject CheckOtherSoundManager()
+    private static GameObject CheckOtherSoundManager()
     {
         return GameObject.FindGameObjectWithTag("SoundManager");
     }
