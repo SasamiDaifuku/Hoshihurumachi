@@ -31,9 +31,6 @@ public class GameController : MonoBehaviour
     //! カウントダウンテキスト
     [SerializeField] private TextMeshProUGUI countdownText = null;
 
-    // カウントダウンの現在値
-    private float _currentCountDown = 0;
-
     /// <summary>
     /// ゲーム終了時に表示するテキスト
     /// </summary>
@@ -67,11 +64,13 @@ public class GameController : MonoBehaviour
     [SerializeField] private Button retryButton;
     [SerializeField] private Button endButton;
     [SerializeField] private Button tweetButton;
+
     [SerializeField] private TimeManager timeManager;
 
-    private SoundManager _soundManager;
-    [SerializeField] private AudioClip gameStartClip;
+    //カウントダウン用のオブジェクト
+    [SerializeField] private GameObject rCountDownParent;
     [SerializeField] private RCountDown rCountDown;
+    [SerializeField] private Transform rCountDownTransform;
 
     private async void Start()
     {
@@ -84,26 +83,13 @@ public class GameController : MonoBehaviour
         retryButton.onClick.AsObservable()
             .Subscribe(_ => fadeManager.NextSceneTransition(sceneGameNum))
             .AddTo(this);
-
-        var objectSoundManager = CheckOtherSoundManager();
-        _soundManager = objectSoundManager.GetComponent<SoundManager>();
-        //カウントダウンタイマーをスタート
-        //StartCoroutine(RCountDownStart());
+        //ゲーム状態をReadyに変更
+        GetSetPlayState = PlayState.Ready;
+        //ゲーム開始までのカウントダウン
         await RCountDownStart();
-    }
-
-    /// <summary>
-    /// 少し経過してからStart表示をけす
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator WaitErase()
-    {
-        yield return new WaitForSeconds(0.5f);
-        var seq = DOTween.Sequence();
-        seq.Append(countdownText.DOFade(0, 0.5f));
-        seq.Join(countdownText.DOScale(5, 0.5f))
-            .AppendCallback(() => countdownText.gameObject.SetActive(false));
-        
+        //カウントダウン完了時、ここの処理が呼ばれる
+        //ゲーム状態をPlayに変更
+        GetSetPlayState = PlayState.Play;
     }
 
     /// <summary>
@@ -135,34 +121,20 @@ public class GameController : MonoBehaviour
         endButton.enabled = true;
         canvasGroupGameEnd.DOFade(1.0f, 0.5f);
     }
-
-    /// <summary>
-    /// カウントダウンスタート
-    /// </summary>
-    private void CountDownStart()
-    {
-        _currentCountDown = (float)countStartTime;
-        GetSetPlayState = PlayState.Ready;
-        countdownText.gameObject.SetActive(true);
-    }
+    
     /// <summary>
     /// ゲームスタート時のカウントダウンを表示
     /// </summary>
     /// <returns></returns>
     private async UniTask RCountDownStart()
     {
-        GetSetPlayState = PlayState.Ready;
-        while (!rCountDown.IsComplete)
+        //カウントダウンプレハブを生成
+        var obj = Instantiate(rCountDown, rCountDownTransform.position, rCountDownTransform.rotation,
+            rCountDownParent.transform);
+        //カウントダウンタイマーをスタート
+        while (!obj.IsComplete)
         {
             await UniTask.Yield();
         }
-        //CountDown完了時、ここの処理が呼ばれる
-        //開始
-        GetSetPlayState = PlayState.Play;
-    }
-
-    private static GameObject CheckOtherSoundManager()
-    {
-        return GameObject.FindGameObjectWithTag("SoundManager");
     }
 }

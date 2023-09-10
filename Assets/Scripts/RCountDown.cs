@@ -19,9 +19,6 @@ public class RCountDown : MonoBehaviour
     private SoundManager _soundManager;
     [SerializeField] private AudioClip gameStartClip;
     
-    public RCountDown()
-    {
-    }
     //カウントダウン完了時にtrueとする
     public bool IsComplete { get; private set; } = false;
 
