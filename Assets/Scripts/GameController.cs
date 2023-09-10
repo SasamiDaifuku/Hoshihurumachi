@@ -56,12 +56,12 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// タイトルのシーン番号
     /// </summary>
-    [FormerlySerializedAs("sceneTitleNum")] public int sceneTitleNum;
+    public int sceneTitleNum;
 
     /// <summary>
     /// ゲーム画面のシーン番号
     /// </summary>
-    [FormerlySerializedAs("sceneGameNum")] public int sceneGameNum;
+    public int sceneGameNum;
 
     [SerializeField] private Button retryButton;
     [SerializeField] private Button endButton;
@@ -70,6 +70,7 @@ public class GameController : MonoBehaviour
 
     private SoundManager _soundManager;
     [SerializeField] private AudioClip gameStartClip;
+    [SerializeField] private RCountDown rCountDown;
 
     private void Start()
     {
@@ -83,14 +84,15 @@ public class GameController : MonoBehaviour
             .Subscribe(_ => fadeManager.NextSceneTransition(sceneGameNum))
             .AddTo(this);
 
-        GameObject objectSoundManager = CheckOtherSoundManager();
+        var objectSoundManager = CheckOtherSoundManager();
         _soundManager = objectSoundManager.GetComponent<SoundManager>();
         //カウントダウンタイマーをスタート
-        CountDownStart();
+        StartCoroutine(RCountDownStart());
     }
 
     private void Update()
     {
+        /*
         //ステートがReadyの時カウントダウン
         if (GetSetPlayState != PlayState.Ready) return;
         //時間を引いていく
@@ -104,12 +106,14 @@ public class GameController : MonoBehaviour
         else if (_currentCountDown <= 0)
         {
             //開始
+            
             GetSetPlayState = PlayState.Play;
             _soundManager.PlaySe(gameStartClip);
             countdownText.text = "お散歩開始！！";
             // Start表示を少しして消す.
             StartCoroutine(WaitErase());
         }
+        */
     }
 
     /// <summary>
@@ -164,6 +168,21 @@ public class GameController : MonoBehaviour
         _currentCountDown = (float)countStartTime;
         GetSetPlayState = PlayState.Ready;
         countdownText.gameObject.SetActive(true);
+    }
+    /// <summary>
+    /// ゲームスタート時のカウントダウンを表示
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator RCountDownStart()
+    {
+        GetSetPlayState = PlayState.Ready;
+        while (!rCountDown.IsComplete)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        //CountDown完了時、ここの処理が呼ばれる
+        //開始
+        GetSetPlayState = PlayState.Play;
     }
 
     private static GameObject CheckOtherSoundManager()
