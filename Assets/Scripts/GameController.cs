@@ -1,4 +1,5 @@
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
@@ -72,7 +73,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private AudioClip gameStartClip;
     [SerializeField] private RCountDown rCountDown;
 
-    private void Start()
+    private async void Start()
     {
         retryButton.enabled = false;
         endButton.enabled = false;
@@ -87,7 +88,8 @@ public class GameController : MonoBehaviour
         var objectSoundManager = CheckOtherSoundManager();
         _soundManager = objectSoundManager.GetComponent<SoundManager>();
         //カウントダウンタイマーをスタート
-        StartCoroutine(RCountDownStart());
+        //StartCoroutine(RCountDownStart());
+        await RCountDownStart();
     }
 
     /// <summary>
@@ -147,12 +149,12 @@ public class GameController : MonoBehaviour
     /// ゲームスタート時のカウントダウンを表示
     /// </summary>
     /// <returns></returns>
-    private IEnumerator RCountDownStart()
+    private async UniTask RCountDownStart()
     {
         GetSetPlayState = PlayState.Ready;
         while (!rCountDown.IsComplete)
         {
-            yield return new WaitForEndOfFrame();
+            await UniTask.Yield();
         }
         //CountDown完了時、ここの処理が呼ばれる
         //開始
