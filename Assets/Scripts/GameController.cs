@@ -90,32 +90,6 @@ public class GameController : MonoBehaviour
         StartCoroutine(RCountDownStart());
     }
 
-    private void Update()
-    {
-        /*
-        //ステートがReadyの時カウントダウン
-        if (GetSetPlayState != PlayState.Ready) return;
-        //時間を引いていく
-        _currentCountDown -= Time.deltaTime;
-        //カウントダウン中
-        if (_currentCountDown <= (float)countStartTime && _currentCountDown > 0)
-        {
-            var intNum = (int)Mathf.Ceil(_currentCountDown);
-            countdownText.text = intNum.ToString();
-        }
-        else if (_currentCountDown <= 0)
-        {
-            //開始
-            
-            GetSetPlayState = PlayState.Play;
-            _soundManager.PlaySe(gameStartClip);
-            countdownText.text = "お散歩開始！！";
-            // Start表示を少しして消す.
-            StartCoroutine(WaitErase());
-        }
-        */
-    }
-
     /// <summary>
     /// 少し経過してからStart表示をけす
     /// </summary>
